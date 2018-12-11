@@ -22,6 +22,11 @@ int main(int argc, char *argv[])
     string request;
     string response;
     int resp_leng;
+    int timeidx = 0;
+    string Times[12] = {"01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00","10:00", "11:00", "12:00"};
+    string tempe[12] = {"10","20","30","40","45","50","55","60","65","70","75","80"};
+
+
 
     char buffer[BUFFERSIZE];
     struct sockaddr_in serveraddr;
@@ -32,14 +37,21 @@ int main(int argc, char *argv[])
     int port = 8080;
     string sensorDataLengthStr = IntToString(sensorData.length());
 
-    request+="POST /sendreading HTTP/1.0\r\n"; // request+="GET /test.html HTTP/1.0\r\n";
-    request+="Host: localhost\r\n";
-    request+="Content-Length: " + sensorDataLengthStr + "\r\n";
-    request+="Accept-Charset: utf-8\r\n";
-    request+="\r\n";
 
     while(1)
     {
+        request="";
+        request+="POST /sendreading HTTP/1.0\r\n"; // request+="GET /test.html HTTP/1.0\r\n";
+        request+="Host: localhost\r\n";
+        request+="Content-Length: " + sensorDataLengthStr + "\r\n";
+        request+="Accept-Charset: utf-8\r\n";
+        request+="\r\n";
+
+        sensorData = "<reading><time>"+Times[timeidx]+"</time><temperature>"+tempe[timeidx]+"</temperature></reading>";
+        timeidx++;
+        if(timeidx == 12)
+            timeidx = 0;
+
         //init winsock
         if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0)
             die_with_wserror("WSAStartup() failed");
